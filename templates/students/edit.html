@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load icon %}
+
+{% include 'partials/_messages.html' %}
+
+<form method="post" enctype="multipart/form-data" action="{% url 'update' student.id %}" class="row g-3 container-md py-4 my-5 w-75 m-auto text-dark" style="background-color:#e5f4ea;">
+  {% csrf_token %}
+  <div class="col-md-4">
+    <label for="first_name" class="form-label">First Name</label>
+    <input type="text" class="form-control" id="first_name" name="first_name" value="{{student.first_name}}"
+    oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);">
+  </div>
+
+  <div class="col-md-4">
+    <label for="middle_name" class="form-label">Middle Name</label>
+    <input type="text" class="form-control" id="middle_name" name="middle_name" value="{{student.middle_name}}"
+    oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);">
+  </div>
+
+  <div class="col-md-4">
+    <label for="last_name" class="form-label">Last Name</label>
+    <input type="text" class="form-control" id="last_name" name="last_name" value="{{student.last_name}}"
+    oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);">
+  </div>
+
+  <div class="col-md-4">
+    <label for="student_index" class="form-label">Index Number</label>
+    <input type="text" class="form-control" id="student_index" name="student_index" value="{{student.student_index}}"
+    oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);">
+  </div>
+
+  <div class="col-md-4">
+    <label for="email" class="form-label">Email</label>
+    <input type="email" class="form-control" id="email" name="email" value="{{student.email}}"
+    oninput="let p=this.selectionStart;this.value=this.value.toLowerCase();this.setSelectionRange(p, p);">
+  </div>
+
+  <div class="col-md-4">
+    <label for="phone_number" class="form-label">Phone Number</label>
+    <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{student.phone_number}}">
+  </div>
+
+  <div class="col-md-4">
+    <label for="date_of_birth" class="form-label">Date of Birth</label>
+    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ student.date_of_birth|date:'Y-m-d' }}">
+  </div>
+
+  <div class="col-md-4">
+    <label for="program" class="form-label">Programe</label>
+    <select id="program" name="program" class="form-select">
+      <option selected>{{student.program}}</option>
+      {% for program in programs %}
+      <option value="{{program}}">{{program}}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-4">
+    <label for="admission_year" class="form-label">Admission Year</label>
+    <select id="admission_year" name="admission_year" class="form-select">
+      <option selected>{{student.admission_year}}</option>
+      {% for admission_year in admission_years %}
+      <option value={{admission_year}}>{{admission_year}}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-12">
+    <label for="address" class="form-label">Address</label>
+    <input type="text" class="form-control" id="address" name="address" value="{{student.address}}"
+    oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);">
+  </div>
+
+  <div class="col-md-6" value="{{student.6}}">
+    <label for="father_name" class="form-label">Father's Name</label>
+    <input type="text" class="form-control" id="father_name" name="father_name" value="{{student.father_name}}"
+    oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);">
+  </div>
+
+  <div class="col-md-6">
+    <label for="father_contact" class="form-label">Father's Contact</label>
+    <input type="text" class="form-control" id="father_contact" name="father_contact" value="{{student.father_contact}}">
+  </div>
+
+  <div class="col-md-6">
+    <label for="mother_name" class="form-label">Mother's Name</label>
+    <input type="text" class="form-control" id="mother_name" name="mother_name" value="{{student.mother_name}}"
+    oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);">
+  </div>
+
+  <div class="col-md-6">
+    <label for="mother_contact" class="form-label">Mother's Contact</label>
+    <input type="text" class="form-control" id="mother_contact" name="mother_contact" value="{{student.mother_contact}}">
+  </div>
+
+  <h3 class="pt-4">Documents</h3>
+    {% for document in documents %}
+        <div class="pb-2">
+            <label class="fw-bold fs-4">{{ document.document_type }}:</label>
+        </div>
+        <img src="{{document.document_file.url}}" alt="{{document.document_type}}" class="w-4/5 m-auto h-[50vh]"/>
+        {% comment %} <embed src="{{ document.document_file.url }}" type="application/pdf" width="600" height="400"> {% endcomment %}
+    {% empty %}
+        <p>No documents found for this student.</p>
+    {% endfor %}
+
+  <div id="documents-container" class="row g-3">
+            
+  </div>
+
+  <button id="add-document-btn" class="col-md-3 btn btn-info" type="button">{% icon 'file-plus' %} Add Document</button><br>
+
+  <div class="col-12">
+    <a href="{% url 'view' student.id %}" class="btn btn-primary">Back</a>
+    <button type="submit" class="btn btn-success">Update</a>
+  </div>     
+
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Define the document type options (this could be passed dynamically through template rendering)
+    const documentTypes = [
+        {% for document_type in document_types %}
+            '{{document_type}}',
+        {% endfor %}
+    ];
+
+    // Get the container where new document fields will be added
+    const documentsContainer = document.getElementById('documents-container');
+    
+    // Function to add new document entry fields
+    function addDocumentEntry() {
+        // Create a div for the document entry
+        const documentEntry = document.createElement('div');
+        documentEntry.classList.add('document-entry', 'col-md-4');
+
+        // Create label and select field for document type
+        const labelType = document.createElement('label');
+        labelType.innerText = 'Document Type:';
+        labelType.setAttribute('for', 'document_type');
+        labelType.classList.add('form-label');
+
+        const selectType = document.createElement('select');
+        selectType.id = 'document_type';
+        selectType.name = 'document_types';
+        selectType.classList.add('form-select');
+
+        const emptyOption = document.createElement('option');
+        emptyOption.selected = true;
+        selectType.appendChild(emptyOption);  // Add empty option
+
+        documentTypes.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.text = type;
+            selectType.appendChild(option);
+        });
+
+        // Create a button for removing the document entry
+        const closeButton = document.createElement('button');
+        closeButton.type = 'button';
+        closeButton.classList.add('btn-close', 'border', 'rounded-circle', 'p-2', 'bg-danger', 'mx-4');
+        closeButton.setAttribute('aria-label', 'Close');
+
+        // Remove the document entry when the close button is clicked
+        closeButton.addEventListener('click', function() {
+            documentEntry.remove();
+        });
+
+        // Create label and input field for document upload
+        const labelUpload = document.createElement('label');
+        labelUpload.innerText = 'Upload Document:';
+        labelUpload.classList.add('form-label');
+
+        const inputUpload = document.createElement('input');
+        inputUpload.type = 'file';
+        inputUpload.name = 'documents';
+        inputUpload.classList.add('form-control');
+        inputUpload.required = true;
+
+        // Append all elements to the document entry
+        documentEntry.appendChild(labelType);
+        documentEntry.appendChild(closeButton);
+        documentEntry.appendChild(selectType);
+        documentEntry.appendChild(document.createElement('br'));
+        documentEntry.appendChild(labelUpload);
+        documentEntry.appendChild(inputUpload);
+        documentEntry.appendChild(document.createElement('br'));
+
+        // Add the document entry to the container
+        documentsContainer.appendChild(documentEntry);
+    }
+
+    // Add event listener to the button for adding new document entries
+    document.getElementById('add-document-btn').addEventListener('click', addDocumentEntry);
+});
+</script>
+
+{% endblock %}

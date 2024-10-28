@@ -1,0 +1,7 @@
+asgiref==3.8.1
+Django==5.1.2
+django-feather==0.3.0
+pillow==11.0.0
+sqlparse==0.5.1
+tzdata==2024.2
+validate_email==1.3

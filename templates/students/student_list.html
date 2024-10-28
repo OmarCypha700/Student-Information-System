@@ -1,0 +1,526 @@
+{% extends 'base.html' %} {% block content %} {% load icon %}
+
+<h2 class="mx-auto text-center my-3">STUDENT LIST</h2>
+{% include 'partials/_messages.html' %}
+<div class="container mt-2 mb-5 bg-light p-4 rounded">
+  <div class="row gap-2 col-md-12 align-items-center">
+    <form method="post" action="{% url 'filter' %}" class="d-flex col-md-6 gap-2">
+        {% csrf_token %}
+        <div class="col-md-5">
+            <label for="program" class="form-label">Program</label>
+            <select id="program" name='program' class="form-select">
+                <option selected>{{student.program}}</option>
+                {% for program in programs %}
+                <option value='{{program}}'>{{program}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label for="admission_year" class="form-label">Admission Year</label>
+            <select id="admission_year" name='admission_year' class="form-select">
+                <option selected>{{student.admission_year}}</option>
+                {% for admission_year in admission_years %}
+                <option value='{{admission_year}}'>{{admission_year}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success my-4">
+            {% icon 'filter' %}
+        </button>
+    </form>
+
+    <div class="col-md-5 d-flex gap-2">
+        <div class="btn-group" role="group">
+          <button id="importGroup" type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+           {% icon 'upload' %} Import
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="importGroup">
+            <li><button data-bs-toggle="modal" data-bs-target="#importModal" class="dropdown-item">Import Students Records</button></li>
+            <li><button data-bs-toggle="modal" data-bs-target="#importModal" class="dropdown-item">Import Documents</button></li>
+          </ul>
+        </div>
+        <button
+            class="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#exportModal"
+        >
+            {% icon 'download-cloud' %} Export
+        </button>
+
+        <button
+            class="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#uploadModal"
+        >
+            {% icon 'user-plus' %} Add Student
+        </button>
+    </div>
+</div>
+
+
+  <table id="example" class="table table-striped">
+    <thead>
+      <tr>
+        <th>
+        {% comment %} <input id="selectAll" class="form-check-input" type="checkbox" name="question_ids" value="{{ question.id }}"> {% endcomment %}
+        #</th>
+        <th>Student Name</th>
+        <th>Student Index</th>
+        <th>Admission Year</th>
+        <th>Program</th>
+        <th>Contact</th>
+        {% comment %} <th></th> {% endcomment %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in students %}
+
+      <tr>
+        <td>
+        {% comment %} <input class="form-check-input student-checkbox" type="checkbox" name="student_ids" value="{{ student.id }}"> {% endcomment %}
+        {{forloop.counter}}</td>
+        <td>
+          <a href="{% url 'view' student.id %}" class="nav-link">
+            {{student.first_name}} {{student.middle_name}} {{student.last_name}}
+          </a>
+        </td>
+        <td>{{student.student_index}}</td>
+        <td>{{student.admission_year}}</td>
+        <td>{{student.program}}</td>
+        <td>{{student.phone_number}}</td>
+
+        {% comment %} <td>
+          <div class="d-flex">
+            <a href="#" class="nav-link text-success px-2">
+              {% icon 'download' %}
+            </a>
+          </div>
+        </td> {% endcomment %}
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="uploadModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="uploadModalLabel"
+  aria-hidden="true"
+>
+  <div
+    class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+    role="document"
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadModalLabel">Add Student</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3" method="post" action="{% url 'add_student' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="col-md-4">
+            <label for="first_name" class="form-label">First Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="first_name"
+              name="first_name"
+              oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="middle_name" class="form-label">Middle Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="middle_name"
+              name="middle_name"
+              oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="last_name" class="form-label">Last Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="last_name"
+              name="last_name"
+              oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="student_index" class="form-label">Index Number</label>
+            <input
+              type="text"
+              class="form-control"
+              id="student_index"
+              name="student_index"
+              oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              oninput="let p=this.selectionStart;this.value=this.value.toLowerCase();this.setSelectionRange(p, p);"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="phone_number" class="form-label">Phone Number</label>
+            <input
+              type="text"
+              class="form-control"
+              id="phone_number"
+              name="phone_number"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="date_of_birth" class="form-label">Date of Birth</label>
+            <input
+              type="date"
+              class="form-control"
+              id="date_of_birth"
+              name="date_of_birth"
+              
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="program" class="form-label">Programe</label>
+            <select id="program" name='program' class="form-select">
+              <option selected>{{student.program}}</option>
+              {% for program in programs %}
+              <option value='{{program}}'>{{program}}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-4">
+        <label for="admission_year" class="form-label">Admission Year</label>
+        <select id="admission_year" name='admission_year' class="form-select">
+          <option selected>{{student.admission_year}}</option>
+          {% for admission_year in admission_years %}
+          <option value='{{admission_year}}'>{{admission_year}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+          <div class="col-12">
+            <label for="address" class="form-label">Address</label>
+            <input
+              type="text"
+              class="form-control"
+              id="address"
+              name="address"
+              oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);"
+            />
+          </div>
+
+          <div class="col-md-6" value="{{student.6}}">
+            <label for="father_name" class="form-label">Father's Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="father_name"
+              name="father_name"
+              oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label for="father_contact" class="form-label">Father's Contact</label>
+            <input
+              type="text"
+              class="form-control"
+              id="father_contact"
+              name="father_contact"
+              />
+          </div>
+
+          <div class="col-md-6">
+            <label for="mother_name" class="form-label">Mother's Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="mother_name"
+              name="mother_name"
+              oninput="let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label for="mother_contact" class="form-label"> Mother's Contact</label>
+            <input
+              type="text"
+              class="form-control"
+              id="mother_contact"
+              name="mother_contact"
+            />
+          </div>
+
+          <h2>Upload Documents</h2>
+        <div id="documents-container" class="row g-3">
+            <div class="document-entry col-md-3">
+                <label for="document_type" class="form-label">Document Type:</label>
+                <select id="document_type" name="document_types" class="form-select">
+                    <option selected></option>
+                    {% for document_type in document_types %}
+                    <option value='{{document_type}}'>{{document_type}}</option>
+                    {% endfor %}
+                </select>
+                <br>
+
+                <label class="form-label">Upload Document:</label>
+                <input class="form-control" type="file" name="documents"><br>
+            </div>
+        </div>
+
+        <button id="add-document-btn" class="col-md-2 btn btn-info" type="button">{% icon 'file-plus' %} Add Document</button><br>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Import Modal -->
+<div
+  class="modal fade"
+  id="importModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="importModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importModalLabel">Upload CSV Document</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form class="" method="post" action="{% url 'import_students' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <a href="{% url 'download_template' %}" class="btn btn-primary float-end">Download CSV Template</a> <br/>
+          
+            <label class="form-label">Upload Document:</label>
+            <input class="form-control" type="file" name="file" accept=".csv" required><br>
+       
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Export Modal -->
+<div
+  class="modal fade"
+  id="exportModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exportModalLabel"
+  aria-hidden="true"
+>
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exportModalLabel">Export Record</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form class="" method="post" action="{% url 'export_students' %}">
+          {% csrf_token %}
+          <div class="d-flex gap-2 py-2">
+            <div class="">
+              <label for="program" class="form-label">Program</label>
+              <select id="program" name='program' class="form-select">
+                  <option selected>{{student.program}}</option>
+                  {% for program in programs %}
+                  <option value='{{program}}'>{{program}}</option>
+                  {% endfor %}
+              </select>
+          </div>
+
+          <div class="">
+              <label for="admission_year" class="form-label">Admission Year</label>
+              <select id="admission_year" name='admission_year' class="form-select">
+                  <option selected>{{student.admission_year}}</option>
+                  {% for admission_year in admission_years %}
+                  <option value='{{admission_year}}'>{{admission_year}}</option>
+                  {% endfor %}
+              </select>
+          </div>
+        </div>
+          <div class="d-flex flex-column">
+            <label class="form-label">Export Options:</label>
+            <div class="d-flex gap-2">
+              <input class="form-check-input" type="checkbox" name="export_csv" id="export_csv" value="csv">
+              <label class="form-label" for="export_csv">Student Information (CSV)</label>
+            </div>
+            <div class="d-flex gap-2">
+              <input class="form-check-input" type="checkbox" name="export_documents" id="export_documents" value="documents">
+              <label class="form-label" for="export_documents">Student Documents (PDFs in ZIP)</label>
+            </div>
+          </div>
+       
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Export</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Define the document type options (this could be passed dynamically through template rendering)
+    const documentTypes = [
+        {% for document_type in document_types %}
+            '{{document_type}}',
+        {% endfor %}
+    ];
+
+    // Get the container where new document fields will be added
+    const documentsContainer = document.getElementById('documents-container');
+    
+    // Function to add new document entry fields
+    function addDocumentEntry() {
+        // Create a div for the document entry
+        const documentEntry = document.createElement('div');
+        documentEntry.classList.add('document-entry', 'col-md-3');
+
+        // Create label and select field for document type
+        const labelType = document.createElement('label');
+        labelType.innerText = 'Document Type:';
+        labelType.setAttribute('for', 'document_type');
+        labelType.classList.add('form-label');
+
+        const selectType = document.createElement('select');
+        selectType.id = 'document_type';
+        selectType.name = 'document_types';
+        selectType.classList.add('form-select');
+
+        const emptyOption = document.createElement('option');
+        emptyOption.selected = true;
+        selectType.appendChild(emptyOption);  // Add empty option
+
+        documentTypes.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.text = type;
+            selectType.appendChild(option);
+        });
+
+        // Create a button for removing the document entry
+        const closeButton = document.createElement('button');
+        closeButton.type = 'button';
+        closeButton.classList.add('btn-close', 'border', 'rounded-circle', 'p-2', 'bg-danger', 'mx-4');
+        closeButton.setAttribute('aria-label', 'Close');
+
+        // Remove the document entry when the close button is clicked
+        closeButton.addEventListener('click', function() {
+            documentEntry.remove();
+        });
+
+        // Create label and input field for document upload
+        const labelUpload = document.createElement('label');
+        labelUpload.innerText = 'Upload Document:';
+        labelUpload.classList.add('form-label');
+
+        const inputUpload = document.createElement('input');
+        inputUpload.type = 'file';
+        inputUpload.name = 'documents';
+        inputUpload.classList.add('form-control');
+        inputUpload.required = true;
+
+        // Append all elements to the document entry
+        documentEntry.appendChild(labelType);
+        documentEntry.appendChild(closeButton);
+        documentEntry.appendChild(selectType);
+        documentEntry.appendChild(document.createElement('br'));
+        documentEntry.appendChild(labelUpload);
+        documentEntry.appendChild(inputUpload);
+        documentEntry.appendChild(document.createElement('br'));
+
+        // Add the document entry to the container
+        documentsContainer.appendChild(documentEntry);
+    }
+
+    // Add event listener to the button for adding new document entries
+    document.getElementById('add-document-btn').addEventListener('click', addDocumentEntry);
+});
+
+// Get the header checkbox and all other checkboxes
+  const selectAllCheckbox = document.getElementById('selectAll');
+  const checkboxes = document.querySelectorAll('.student-checkbox');
+
+  // Add event listener to header checkbox
+  selectAllCheckbox.addEventListener('change', function() {
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = selectAllCheckbox.checked;
+    });
+  });
+</script>
+
+{% endblock %}
