@@ -23,6 +23,9 @@ class Student(models.Model):
     mother_name = models.CharField(max_length=100)
     mother_contact = models.CharField(max_length=10)
 
+    # Profile Picture
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True,)
+
     def __str__(self):
         return f"{self.first_name} {self.middle_name} {self.last_name} | {self.student_index}"
     

@@ -16,6 +16,13 @@
 
 <form class="row g-3 container-md py-4 my-5 w-75 m-auto text-dark" style="background-color:#e5f4ea;">
 {% csrf_token %}
+<div class="d-flex justify-content-center align-items-center">
+  {% if student.profile_picture %}
+      <img src="{{ student.profile_picture.url }}" alt="Profile Picture" class="rounded-2" width="150" height="150">
+  {% else %}
+      <p>No profile picture available.</p>
+  {% endif %}
+  </div>
   <div class="col-md-4">
     <label for="first_name" class="form-label">First Name</label>
     <input type="text" class="form-control" id="first_name" name="first_name" value="{{student.first_name}}" readonly>
@@ -61,27 +68,27 @@
     <input type="text" class="form-control" id="admission_year" name="admission_year" value="{{student.admission_year}}" readonly>
   </div>
 
-  <div class="col-12">
+  <div class="col-md-4">
     <label for="address" class="form-label">Address</label>
     <input type="text" class="form-control" id="address" name="address" value="{{student.address}}" readonly>
   </div>
 
-  <div class="col-md-6" value="{{student.6}}">
+  <div class="col-md-4">
     <label for="father_name" class="form-label">Father's Name</label>
     <input type="text" class="form-control" id="father_name" name="father_name" value="{{student.father_name}}" readonly>
   </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
     <label for="father_contact" class="form-label">Father's Contact</label>
     <input type="text" class="form-control" id="father_contact" name="father_contact" value="{{student.father_contact}}" readonly>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-4">
     <label for="mother_name" class="form-label">Mother's Name</label>
     <input type="text" class="form-control" id="mother_name" name="mother_name" value="{{student.mother_name}}" readonly>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-4">
     <label for="mother_contact" class="form-label">Mother's Contact</label>
     <input type="text" class="form-control" id="mother_contact" name="mother_contact" value="{{student.mother_contact}}" readonly>
   </div>
@@ -92,22 +99,24 @@
           <label class="fw-bold fs-3 page-break-before no-print">{{ document.document_type }}:</label>
           <a class="btn btn-danger no-print" href="{% url 'delete_document' document.id%}">Delete Document</a>
         </div>
-        <img src="{{document.document_file.url}}" alt="{{document.document_type}}" class="w-4/5 m-auto" style="height=100vh;"/>
-        <embed src="{% static 'Turnitin_report.pdf' %}" type="application/pdf" width="600" height="400">
-        {% comment %} <iframe src="D:\Student Information System\media\media\documents\Turnitin_report.pdf" width="100%" height="600px"></iframe> {% endcomment %}
+        <iframe class="no-print" src="{{ document.document_file.url }}" title="{{document.document_type}}" width="100%" height="400px"></iframe>
     {% empty %}
-        <p>No documents found for this student.</p>
+        <p class="no-print">No documents found for this student.</p>
     {% endfor %}
 
   <div class="col-md-6 mx-auto">
     <a href="{% url 'student_list' %}" class="btn btn-dark no-print">Back</a>
-    <button type="submit" class="btn btn-primary no-print" onclick="window.print();">{% icon 'printer' %} Print</button>
+    <button type="button" class="btn btn-primary no-print" onclick="window.print();"> {% icon 'printer' %} Print</button>
     <a href="{% url 'edit' student.id %}" class="btn btn-warning no-print">{% icon 'edit' %} Edit</a>
     <a href="{% url 'delete' student.id %}" class="btn btn-danger no-print">{% icon 'trash-2' %} Delete</a>
   </div>     
 
 </form>
 
-
+<script>
+    function triggerPrint() {
+        window.print();
+    }
+</script>
 
 {% endblock %}

@@ -39,10 +39,12 @@
     @media print {
       .row {
         display: flex;
+        justify-content: center;
+        align-items: center;
         flex-wrap: wrap;
       }
 
-      .col-md-4, .col-md-6 {
+      .col-md-4{
         flex: 0 0 50%;
         max-width: 50%;
       }
@@ -50,6 +52,12 @@
       /* Ensure inputs and labels fit nicely in print */
       .form-control, .form-label {
         font-size: 14px;
+        padding:4px;
+        /*border:none;*/
+      }
+
+      .form-label {
+        font-weight: bold;      
       }
 
       /* Hide buttons and elements you don't want in the print view */
@@ -69,14 +77,14 @@
       .print-header {
         text-align: center;
         font-size: 18px;
-        margin-bottom: 10px;
+        margin-bottom: 2px;
         display:block;
       }
 
       /* Add optional divider after header */
       .divider {
         border-top: 2px solid black;
-        margin: 10px 0;
+        margin: 5px 0;
       }
     }
   </style>

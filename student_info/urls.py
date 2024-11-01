@@ -11,6 +11,11 @@ urlpatterns = [
     path('update/<int:id>', views.update, name='update'),
     path('delete_document/<int:id>', views.delete_document, name='delete_document'),
     path('import_students', views.import_students, name='import_students'),
-    path('download_template/', views.download_csv_template, name='download_template'),
-    path('export_students', views.export_students, name='export_students'),
+    path('csv_template/', views.download_csv_template, name='csv_template'),
+    path('export_students/', views.export_students, name='export_students'),
+    path('import_documents/', views.import_documents, name='import_documents'),
+    path('document_template/', views.download_document_template, name='document_template'),
+    path('import_profile/', views.import_profile, name='import_profile'),
+    path('profile_template/', views.download_profile_template, name='profile_template'),
+
 ]

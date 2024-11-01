@@ -37,8 +37,9 @@
            {% icon 'upload' %} Import
           </button>
           <ul class="dropdown-menu" aria-labelledby="importGroup">
-            <li><button data-bs-toggle="modal" data-bs-target="#importModal" class="dropdown-item">Import Students Records</button></li>
-            <li><button data-bs-toggle="modal" data-bs-target="#importModal" class="dropdown-item">Import Documents</button></li>
+            <li><button data-bs-toggle="modal" data-bs-target="#importStudentModal" class="dropdown-item">Import Students Records</button></li>
+            <li><button data-bs-toggle="modal" data-bs-target="#importDocumentModal" class="dropdown-item">Import Documents</button></li>
+            <li><button data-bs-toggle="modal" data-bs-target="#importProfileModal" class="dropdown-item">Import Profile Pictures</button></li>
           </ul>
         </div>
         <button
@@ -315,19 +316,19 @@
 </div>
 
 
-<!-- Import Modal -->
+<!-- Import Student Modal -->
 <div
   class="modal fade"
-  id="importModal"
+  id="importStudentModal"
   tabindex="-1"
   role="dialog"
-  aria-labelledby="importModalLabel"
+  aria-labelledby="importStudentModalLabel"
   aria-hidden="true"
 >
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="importModalLabel">Upload CSV Document</h5>
+        <h5 class="modal-title" id="importStudentModalLabel">Upload CSV Document</h5>
         <button
           type="button"
           class="btn-close"
@@ -338,7 +339,7 @@
       <div class="modal-body">
         <form class="" method="post" action="{% url 'import_students' %}" enctype="multipart/form-data">
           {% csrf_token %}
-          <a href="{% url 'download_template' %}" class="btn btn-primary float-end">Download CSV Template</a> <br/>
+          <a href="{% url 'csv_template' %}" class="btn btn-primary float-end">Download CSV Template</a> <br/>
           
             <label class="form-label">Upload Document:</label>
             <input class="form-control" type="file" name="file" accept=".csv" required><br>
@@ -352,6 +353,89 @@
             </button>
             <button type="submit" class="btn btn-primary">Upload</button>
           </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Import Documents Modal -->
+<div
+  class="modal fade"
+  id="importDocumentModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="importDocumentModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importDocumentModalLabel">Upload CSV Document</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'import_documents' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <a href="{% url 'document_template' %}" class="btn btn-primary float-end mb-2">Download Metadata CSV Template</a> <br/>
+            
+            <label class="form-label">Upload Document Metadata (CSV):</label>
+            <input class="form-control" type="file" name="csv_file" accept=".csv" required><br>
+
+            <label class="form-label">Upload Document Files:</label>
+            <input class="form-control" type="file" name="documents" accept=".pdf" multiple required><br>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Import Profile Modal -->
+<div
+  class="modal fade"
+  id="importProfileModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="importProfileModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importProfileModalLabel">Upload CSV Document</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'import_profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <a href="{% url 'profile_template' %}" class="btn btn-primary float-end mb-2">Download Metadata CSV Template</a> <br/>
+            
+            <label class="form-label">Upload Profile Metadata (CSV):</label>
+            <input class="form-control" type="file" name="csv_file" accept=".csv" required><br>
+
+            <label class="form-label">Upload Profile Pictures:</label>
+            <input class="form-control" type="file" name="documents" accept=".webp,.jpg,.png" multiple required><br>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
         </form>
       </div>
     </div>
@@ -510,17 +594,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listener to the button for adding new document entries
     document.getElementById('add-document-btn').addEventListener('click', addDocumentEntry);
 });
-
-// Get the header checkbox and all other checkboxes
-  const selectAllCheckbox = document.getElementById('selectAll');
-  const checkboxes = document.querySelectorAll('.student-checkbox');
-
-  // Add event listener to header checkbox
-  selectAllCheckbox.addEventListener('change', function() {
-    checkboxes.forEach(checkbox => {
-      checkbox.checked = selectAllCheckbox.checked;
-    });
-  });
 </script>
 
 {% endblock %}

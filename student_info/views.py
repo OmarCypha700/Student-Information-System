@@ -1,7 +1,8 @@
 import csv
 import io
 import os
-from PIL import Image
+# from PIL import Image
+import pandas as pd
 import zipfile
 from django.core.files import File
 from django.conf import settings
@@ -329,12 +330,10 @@ def export_students(request):
             students = students.filter(admission_year=admission_year)
 
         # Initialize an in-memory bytes buffer for file creation
-        response = HttpResponse(content_type='application/zip')
         zip_buffer = io.BytesIO()
         
         # Prepare to write to zip archive if documents are selected
         with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-
             # Step 1: Export Student Information in CSV if selected
             if export_csv:
                 csv_buffer = io.StringIO()
@@ -365,28 +364,184 @@ def export_students(request):
                     for document in documents:
                         document_path = document.document_file.path
                         try:
-                            # Open the image and convert it to PDF
-                            with Image.open(document_path) as img:
-                                img = img.convert('RGB')  # Ensure the image is in RGB mode
-                                pdf_buffer = io.BytesIO()
-                                img.save(pdf_buffer, format="PDF")
-
-                                # Define PDF filename in zip as "<student_index>/<document_type>.pdf"
-                                pdf_filename = f"{student.student_index}/{document.document_type}.pdf"
-                                zip_file.writestr(pdf_filename, pdf_buffer.getvalue())
-                                pdf_buffer.close()
+                            # Define PDF filename in zip as "<student_index>/<document_type>.pdf"
+                            pdf_filename = f"{student.student_index}_{document.document_type}.pdf"
+                            
+                            # Add the PDF file directly to the zip
+                            with open(document_path, 'rb') as pdf_file:
+                                zip_file.writestr(pdf_filename, pdf_file.read())
 
                         except Exception as e:
-                            # Handle any errors in conversion, possibly logging for debugging
-                            print(f"Error converting {document_path} to PDF: {e}")
+                            # Handle any errors in accessing the PDF, possibly logging for debugging
+                            print(f"Error adding {document_path} to ZIP: {e}")
+
+        # Move the buffer position to the start
+        zip_buffer.seek(0)
 
         # Return the zip file as a response
-        zip_buffer.seek(0)
         response = HttpResponse(zip_buffer, content_type='application/zip')
         response['Content-Disposition'] = 'attachment; filename="students_export.zip"'
         return response
 
     # Render the form with available programs and admission years for filtering
-    # programs = Student.objects.values_list('program', flat=True).distinct()
-    # admission_years = Student.objects.values_list('admission_year', flat=True).distinct()
     return redirect('student_list')
+
+
+
+def import_documents(request):
+    if request.method == 'POST':
+        # Retrieve the uploaded CSV and document files
+        csv_file = request.FILES.get('csv_file')
+        documents = request.FILES.getlist('documents')
+        
+        # Check if the uploaded file is a CSV
+        if not csv_file or not csv_file.name.endswith('.csv'):
+            messages.error(request, 'Please upload a CSV file.')
+            return redirect('student_list')
+
+        # Read the CSV file into a DataFrame
+        try:
+            df = pd.read_csv(csv_file)
+        except Exception as e:
+            messages.error(request, f'Error reading CSV file: {e}')
+            return redirect('student_list')
+        
+        # Prepare document mapping for quick lookup
+        document_map = {doc.name: doc for doc in documents}
+        
+        for index, row in df.iterrows():
+            student_index = row['student_index']
+            document_type = row['document_type']
+            document_name = row['document_name']  # The document's filename from the CSV
+
+            # Check if the document file was uploaded
+            if document_name in document_map:
+                try:
+                    student = Student.objects.get(student_index=student_index)
+                    uploaded_file = document_map[document_name]
+                    
+                    # Look for an existing document of the same type
+                    document, created = Document.objects.update_or_create(
+                        student=student,
+                        document_type=document_type,
+                        defaults={'document_file': uploaded_file}  # This will update the file
+                    )
+                    
+                    # If the document already existed, handle file overwrite
+                    if not created:
+                        # Delete the old file if it exists
+                        if document.document_file:
+                            old_file_path = document.document_file.path
+                            if os.path.exists(old_file_path):
+                                os.remove(old_file_path)  # Remove the old file
+
+                        # Now save the new file (this may be redundant due to update_or_create, but it ensures the new file is saved)
+                        document.document_file.save(uploaded_file.name, uploaded_file)
+
+                    messages.success(request, f'Successfully {"uploaded new" if created else "replaced"} document for student ID {student_index} ({document_type})')
+                    
+                except Student.DoesNotExist:
+                    messages.error(request, f'Student with ID {student_index} does not exist.')
+            else:
+                messages.error(request, f'Document {document_name} not found in uploaded files.')
+
+        return redirect('student_list')
+
+    return render(request, 'students/student_list.html')
+
+
+
+def download_document_template(request):
+    # Define the filename
+    filename = "document_upload_template.csv"
+    
+    # Create the HTTP response with the appropriate CSV header
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    # Create a CSV writer
+    writer = csv.writer(response)
+
+    # Write the header row
+    writer.writerow(['student_index', 'document_type', 'document_name'])
+    
+    # Optionally, you can add some example data rows to guide users
+    writer.writerow(['NMCASMRM200001', 'Transcript', 'NMCASMRM200001_Transcript.pdf'])
+    writer.writerow(['NMCASMRM200002', 'Certificate', 'NMCASMRM200002_Certificate.pdf'])
+
+    return response
+
+
+
+def import_profile(request):
+    if request.method == 'POST':
+        # Retrieve the uploaded CSV and document files
+        csv_file = request.FILES.get('csv_file')
+        documents = request.FILES.getlist('documents')
+        
+        # Check if the uploaded file is a CSV
+        if not csv_file or not csv_file.name.endswith('.csv'):
+            messages.error(request, 'Please upload a CSV file containing metadata.')
+            return redirect('student_list')
+
+        # Read the CSV file into a DataFrame
+        try:
+            df = pd.read_csv(csv_file)
+        except Exception as e:
+            messages.error(request, f'Error reading CSV file: {e}')
+            return redirect('student_list')
+        
+        # Prepare document mapping for quick lookup
+        document_map = {doc.name: doc for doc in documents}
+        
+        for index, row in df.iterrows():
+            student_index = row['student_index']
+            document_name = row['document_name']  # The profile picture's filename from the CSV
+
+            # Check if the document file was uploaded
+            if document_name in document_map:
+                try:
+                    student = Student.objects.get(student_index=student_index)
+                    uploaded_file = document_map[document_name]
+                    
+                    # Handle file overwrite by deleting the old profile picture if it exists
+                    if student.profile_picture:
+                        old_file_path = student.profile_picture.path
+                        if os.path.exists(old_file_path):
+                            os.remove(old_file_path)  # Remove the old profile picture
+
+                    # Save the new profile picture
+                    student.profile_picture.save(uploaded_file.name, uploaded_file)
+                    student.save()
+
+                    messages.success(request, f'Successfully uploaded/updated profile picture for student ID {student_index}')
+                    
+                except Student.DoesNotExist:
+                    messages.error(request, f'Student with ID {student_index} does not exist.')
+            else:
+                messages.error(request, f'Profile picture {document_name} not found in uploaded files.')
+
+        return redirect('student_list')
+
+    return render(request, 'students/student_list.html')
+
+
+def download_profile_template(request):
+    # Define the filename
+    filename = "profile_upload_template.csv"
+    
+    # Create the HTTP response with the appropriate CSV header
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    # Create a CSV writer
+    writer = csv.writer(response)
+
+    # Write the header row
+    writer.writerow(['student_index', 'document_name'])
+    
+    # Optionally, you can add some example data rows to guide users
+    writer.writerow(['NMCASMRM200001','NMCASMRM200001_Transcript.webp'])
+    writer.writerow(['NMCASMRM200002','NMCASMRM200002_Certificate.webp'])
+
+    return response

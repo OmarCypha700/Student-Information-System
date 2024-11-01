@@ -50,6 +50,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'student_info_sys.middleware.csp_middleware.ContentSecurityPolicyMiddleware',
 ]
 
 ROOT_URLCONF = "student_info_sys.urls"
@@ -160,3 +161,5 @@ LOGGING = {
         },
     },
 }
+
+# X_FRAME_OPTIONS = 'SAMEORIGIN'  # Allows iframe from the same origin
