@@ -17,14 +17,12 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url='/auth/login')
 def student_list(request):
     students = Student.objects.all()[:300]
-    programs = Program.objects.all()
-    admission_years = AdmissionYear.objects.all()
     document_types = DocumentType.objects.all()
 
     context = {
         'students':students,
-        'programs':programs,
-        'admission_years':admission_years,
+        'programs': Student.objects.values_list('program', flat=True).distinct(),
+        'admission_years': Student.objects.values_list('admission_year', flat=True).distinct(),
         'document_types':document_types
     }
 
@@ -140,14 +138,13 @@ def edit(request, id):
     student = Student.objects.get(id=id)
     documents = Document.objects.filter(student=student)
     document_types = DocumentType.objects.all()
-    programs = Program.objects.all()
-    admission_years = AdmissionYear.objects.all()
+
     context = {
         'student':student,
         'documents':documents,
         'document_types':document_types,
-        'programs':programs,
-        'admission_years':admission_years,
+        'programs': Student.objects.values_list('program', flat=True).distinct(),
+        'admission_years': Student.objects.values_list('admission_year', flat=True).distinct(),
     }
     
     return render(request,'students/edit.html', context)

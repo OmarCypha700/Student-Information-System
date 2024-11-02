@@ -99,8 +99,7 @@
         <div class="pb-2">
             <label class="fw-bold fs-4">{{ document.document_type }}:</label>
         </div>
-        <img src="{{document.document_file.url}}" alt="{{document.document_type}}" class="w-4/5 m-auto h-[50vh]"/>
-        {% comment %} <embed src="{{ document.document_file.url }}" type="application/pdf" width="600" height="400"> {% endcomment %}
+        <iframe class="no-print" src="{{ document.document_file.url }}" title="{{document.document_type}}" width="100%" height="400px"></iframe>
     {% empty %}
         <p>No documents found for this student.</p>
     {% endfor %}
