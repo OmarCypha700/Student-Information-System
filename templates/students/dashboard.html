@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load icon %}
+
+{% load custom_filters %}
+
+<style>
+.chart-container {
+    transition: transform 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out, background-color 0.3s, opacity 0.3s;
+    cursor: pointer;
+    position: relative;
+}
+
+.chart-container.scaled {
+    transform: scale(1.5);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.5);
+    z-index: 1050; /* Ensure it appears above other elements */
+    background-color: rgba(255, 255, 255, 0.95); /* White and slightly opaque */
+    border-radius: 0.5rem; /* Maintain card's rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+</style>
+
+
+<div class="container mt-4 mb-4">
+    <div class="row row-cols-4 g-4 mb-4">
+        <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body" id="">
+                        <h5 class="card-title text-center">Total Students</h5>
+                        <p class = " text-center fw-bold fs-3">{{ total_students|format_number }}</p>
+                    </div>
+                </div>
+        </div>
+
+        <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Diploma Students</h5>
+                        <p class = " text-center fw-bold fs-3">{{diploma_students}}</p>
+                    </div>
+                </div>
+        </div>
+
+        <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Degree Students</h5>
+                        <p class = " text-center fw-bold fs-3">{{degree_students}}</p>
+                    </div>
+                </div>
+        </div>
+
+        {% comment %} <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body chart-container" id="">
+                        <h5 class="card-title text-center">Total Midwifery Students</h5>
+                        <p class = " text-center fw-bold fs-3">56 K</p>
+                    </div>
+                </div>
+        </div> {% endcomment %}
+        
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for program, data in program_data.items %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body chart-container" id="chart-container-{{ forloop.counter }}">
+                        <h5 class="card-title">{{ program }} Program Enrollment</h5>
+                        <canvas id="chart-{{ forloop.counter }}"></canvas>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        {% for program, data in program_data.items %}
+            const ctx{{ forloop.counter }} = document.getElementById('chart-{{ forloop.counter }}').getContext('2d');
+            const labels{{ forloop.counter }} = JSON.parse('{{ data.labels|safe }}');
+            const dataPoints{{ forloop.counter }} = JSON.parse('{{ data.data|safe }}');
+
+            new Chart(ctx{{ forloop.counter }}, {
+                type: 'line',
+                data: {
+                    labels: labels{{ forloop.counter }},
+                    datasets: [{
+                        label: '{{ program }}',
+                        data: dataPoints{{ forloop.counter }},
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Students'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Admission Year'
+                            }
+                        }
+                    }
+                },
+            });
+
+            // Add click event to toggle the scaling effect
+            document.getElementById('chart-container-{{ forloop.counter }}').addEventListener('click', function () {
+                this.classList.toggle('scaled');
+            });
+        {% endfor %}
+    });
+</script>
+
+{% endblock %}

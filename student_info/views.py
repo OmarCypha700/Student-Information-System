@@ -1,6 +1,7 @@
 import csv
 import io
 import os
+import json
 # from PIL import Image
 import pandas as pd
 import zipfile
@@ -10,11 +11,45 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from .models import Student, Document, DocumentType, Program, AdmissionYear
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
 @login_required(login_url='/auth/login')
+def dashboard(request):
+    # Get unique programs
+    total_students = Student.objects.count()
+    degree_students = Student.objects.filter(program__startswith='Bsc').count()
+    diploma_students = Student.objects.filter(program__startswith='Dip').count()
+    programs = Student.objects.values_list('program', flat=True).distinct()
+    
+    
+    # Prepare data for each program
+    program_data = {}
+    for program in programs:
+        enrollment_data = (
+            Student.objects.filter(program=program)
+            .values('admission_year')
+            .annotate(student_count=Count('id'))
+        )
+        
+        program_data[program] = {
+            'labels': json.dumps([entry['admission_year'] for entry in enrollment_data]),
+            'data': json.dumps([entry['student_count'] for entry in enrollment_data])
+        }
+
+    context = {
+        'program_data': program_data,
+        'total_students': total_students,
+        'degree_students': degree_students,
+        'diploma_students': diploma_students,
+    }
+
+    return render(request, 'students/dashboard.html', context)
+
+
+# @login_required(login_url='/auth/login')
 def student_list(request):
     students = Student.objects.all()[:300]
     document_types = DocumentType.objects.all()
