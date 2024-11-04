@@ -1,0 +1,30 @@
+{% load static %}
+{% load icon %}
+<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar" style="background-color: #183824;">>
+  {% comment %} <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button> {% endcomment %}
+
+    <div class="position-sticky pt-3">
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a class="nav-link text-light" href="{% url 'dashboard' %}">
+            {% icon 'activity' %}
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="{% url 'student_list' %}">
+            {% icon 'user' %}
+            Student List
+          </a>
+        </li>
+        {% comment %} {% if perms.timesheet_app.can_view_report %}
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#">
+            {% icon 'file-text' %}
+            Reports
+          </a>
+        </li>
+        {% endif %} {% endcomment %}
+      </ul>
+    </div>
+  </nav>

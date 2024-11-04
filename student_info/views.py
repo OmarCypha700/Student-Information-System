@@ -2,15 +2,15 @@ import csv
 import io
 import os
 import json
-# from PIL import Image
+from datetime import datetime
 import pandas as pd
 import zipfile
-from django.core.files import File
+# from django.core.files import File
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from .models import Student, Document, DocumentType, Program, AdmissionYear
+from .models import Student, Document, DocumentType
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 
@@ -18,10 +18,21 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 @login_required(login_url='/auth/login')
 def dashboard(request):
-    # Get unique programs
+    # Get total number of students
     total_students = Student.objects.count()
+    # Get total degree students
     degree_students = Student.objects.filter(program__startswith='Bsc').count()
+    # Get total diploma students
     diploma_students = Student.objects.filter(program__startswith='Dip').count()
+    # Get total Nursing students
+    rgn = Student.objects.filter(program__icontains='Registered General Nurse').count()
+    rm = Student.objects.filter(program__icontains='Registered Midwifery').count()
+    ph = Student.objects.filter(program__icontains='Public Health Nursing').count()
+
+    # Calculate the admission years for the last five years
+    current_year = datetime.now().year
+    past_five_years = [f"{year}/{year+1}" for year in range(current_year - 4, current_year + 1)]
+    # Get unique programs
     programs = Student.objects.values_list('program', flat=True).distinct()
     
     
@@ -29,7 +40,7 @@ def dashboard(request):
     program_data = {}
     for program in programs:
         enrollment_data = (
-            Student.objects.filter(program=program)
+            Student.objects.filter(program=program, admission_year__in=past_five_years)
             .values('admission_year')
             .annotate(student_count=Count('id'))
         )
@@ -44,6 +55,9 @@ def dashboard(request):
         'total_students': total_students,
         'degree_students': degree_students,
         'diploma_students': diploma_students,
+        'rgn': rgn,
+        'rm': rm,
+        'ph': ph,
     }
 
     return render(request, 'students/dashboard.html', context)
