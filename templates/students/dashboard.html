@@ -18,7 +18,7 @@
     left: 50%;
     transform: translate(-50%, -50%) scale(1.5);
     z-index: 1050; /* Ensure it appears above other elements */
-    background-color: rgba(255, 255, 255, 0.95); /* White and slightly opaque */
+    background-color: rgba(255, 255, 255, 1); /* White and slightly opaque */
     border-radius: 0.5rem; /* Maintain card's rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
@@ -44,7 +44,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title text-center">Diploma Students</h5>
-                        <p class = " text-center fw-bold fs-3">{{diploma_students}}</p>
+                        <p class = " text-center fw-bold fs-3">{{diploma_students|format_number}}</p>
                     </div>
                 </div>
         </div>
@@ -53,41 +53,41 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title text-center">Degree Students</h5>
-                        <p class = " text-center fw-bold fs-3">{{degree_students}}</p>
+                        <p class = " text-center fw-bold fs-3">{{degree_students|format_number}}</p>
                     </div>
                 </div>
         </div>
 
         <div class="col">
                 <div class="card shadow-sm">
-                    <div class="card-body chart-container">
+                    <div class="card-body">
                         <h5 class="card-title text-center">Total RGN Students</h5>
-                        <p class = " text-center fw-bold fs-3">{{rgn}}</p>
+                        <p class = " text-center fw-bold fs-3">{{rgn|format_number}}</p>
                     </div>
                 </div>
         </div>
 
         <div class="col">
                 <div class="card shadow-sm">
-                    <div class="card-body chart-container">
+                    <div class="card-body">
                         <h5 class="card-title text-center">Total RM Students</h5>
-                        <p class = " text-center fw-bold fs-3">{{rm}}</p>
+                        <p class = " text-center fw-bold fs-3">{{rm|format_number}}</p>
                     </div>
                 </div>
         </div>
 
         <div class="col">
                 <div class="card shadow-sm">
-                    <div class="card-body chart-container">
+                    <div class="card-body">
                         <h5 class="card-title text-center">Total PH Students</h5>
-                        <p class = " text-center fw-bold fs-3">{{ph}}</p>
+                        <p class = " text-center fw-bold fs-3">{{ph|format_number}}</p>
                     </div>
                 </div>
         </div>
 
         {% comment %} <div class="col">
                 <div class="card shadow-sm">
-                    <div class="card-body chart-container" id="">
+                    <div class="card-body>
                         <h5 class="card-title text-center">Total Midwifery Students</h5>
                         <p class = " text-center fw-bold fs-3">56 K</p>
                     </div>
@@ -96,7 +96,7 @@
 
         <div class="col">
                 <div class="card shadow-sm">
-                    <div class="card-body chart-container" id="">
+                    <div class="card-body>
                         <h5 class="card-title text-center">Total Midwifery Students</h5>
                         <p class = " text-center fw-bold fs-3">56 K</p>
                     </div>
@@ -105,7 +105,7 @@
 
         <div class="col">
                 <div class="card shadow-sm">
-                    <div class="card-body chart-container" id="">
+                    <div class="card-body>
                         <h5 class="card-title text-center">Total Midwifery Students</h5>
                         <p class = " text-center fw-bold fs-3">56 K</p>
                     </div>

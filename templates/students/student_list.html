@@ -4,7 +4,7 @@
 {% include 'partials/_messages.html' %}
 <div class="container mt-2 mb-5 bg-light p-4 rounded">
   <div class="row gap-2 col-md-12 align-items-center">
-    <form method="post" action="{% url 'filter' %}" class="d-flex col-md-6 gap-2">
+    <form method="post" action="{% url 'filter' %}" class="d-flex col-md-5 gap-2">
         {% csrf_token %}
         <div class="col-md-5">
             <label for="program" class="form-label">Program</label>
@@ -16,7 +16,7 @@
             </select>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label for="admission_year" class="form-label">Admission Year</label>
             <select id="admission_year" name='admission_year' class="form-select">
                 <option selected>{{student.admission_year}}</option>
@@ -31,7 +31,7 @@
         </button>
     </form>
 
-    <div class="col-md-5 d-flex gap-2">
+    <div class="col-md-6 d-flex gap-2">
         <div class="btn-group" role="group">
           <button id="importGroup" type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
            {% icon 'upload' %} Import
@@ -64,15 +64,12 @@
   <table id="example" class="table table-striped">
     <thead>
       <tr>
-        <th>
-        {% comment %} <input id="selectAll" class="form-check-input" type="checkbox" name="question_ids" value="{{ question.id }}"> {% endcomment %}
-        #</th>
+        <th>#</th>
         <th>Student Name</th>
         <th>Student Index</th>
         <th>Admission Year</th>
         <th>Program</th>
         <th>Contact</th>
-        {% comment %} <th></th> {% endcomment %}
       </tr>
     </thead>
     <tbody>
@@ -80,7 +77,6 @@
 
       <tr>
         <td>
-        {% comment %} <input class="form-check-input student-checkbox" type="checkbox" name="student_ids" value="{{ student.id }}"> {% endcomment %}
         {{forloop.counter}}</td>
         <td>
           <a href="{% url 'view' student.id %}" class="nav-link">
@@ -91,15 +87,6 @@
         <td>{{student.admission_year}}</td>
         <td>{{student.program}}</td>
         <td>{{student.phone_number}}</td>
-
-        {% comment %} <td>
-          <div class="d-flex">
-            <a href="#" class="nav-link text-success px-2">
-              {% icon 'download' %}
-            </a>
-          </div>
-        </td> {% endcomment %}
-
       </tr>
       {% endfor %}
     </tbody>

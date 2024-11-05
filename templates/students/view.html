@@ -104,7 +104,7 @@
         <p class="no-print">No documents found for this student.</p>
     {% endfor %}
 
-  <div class="col-md-6 mx-auto">
+  <div class="col-md-8 mx-auto">
     <a href="{% url 'student_list' %}" class="btn btn-dark no-print">Back</a>
     <button type="button" class="btn btn-primary no-print" onclick="window.print();"> {% icon 'printer' %} Print</button>
     <a href="{% url 'edit' student.id %}" class="btn btn-warning no-print">{% icon 'edit' %} Edit</a>

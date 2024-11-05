@@ -1,14 +1,11 @@
-{% extends 'base_auth.html' %} 
+{% extends 'base.html' %} 
 {% load static %}
 {% block content %}
-<div class="d-flex justify-content-center mt-3">
-  <h4>Registeration Page</h4>
-</div>
-
 <div class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-4">
-  <a href="{% url 'question_list' %}" class="btn btn-success"> ← Back</a>
+<h4 class="text-center mt-3">REGISTERATION PAGE</h4>
+  {% comment %} <div class="col-md-2"></div> {% endcomment %}
+  <div class="col-md-5 mx-auto">
+  {% comment %} <a href="{% url 'student_list' %}" class="btn btn-success"> ← Back</a> {% endcomment %}
     <div class="card mt-2 mb-3">
       <div class="card-body">
         <form action="{% url 'register' %}" method="post">
@@ -21,7 +18,7 @@
               type="text"
               name="first_name"
               id="firstNameField"
-              class="form-control form-control-sm"
+              class="form-control"
               placeholder="Enter First Name"
               value="{{fiedlValue.first_name}}"
               required
@@ -33,7 +30,7 @@
               type="text"
               name="last_name"
               id="lastNameField"
-              class="form-control form-control-sm"
+              class="form-control"
               placeholder="Enter Last Name"
               value="{{fiedlValue.last_name}}"
               required
@@ -45,14 +42,11 @@
               type="text"
               name="username"
               id="usernameField"
-              class="form-control form-control-sm"
+              class="form-control"
               placeholder="Enter username"
               value="{{fiedlValue.username}}"
               required
             />
-            <div class="username-feedback invalid-feedback" style="display: none;">
-            </div>
-            <p class="text-sm text-success usernameSuccess"></p>
           </div>
           <div class="form-group p-2">
             <label for="emailField"> Email: </label>
@@ -60,13 +54,11 @@
               type="email"
               name="email"
               id="emailField"
-              class="form-control form-control-sm"
+              class="form-control"
               placeholder="Email"
               value="{{fiedlValue.email}}"
               required
             />
-            <div class="email-feedback invalid-feedback" style="display: none;"></div>
-            <p class="text-sm text-success emailSuccess"></p>
           </div>
           <div class="form-group p-2">
             <label for="passwordField"> Password: </label>
@@ -74,18 +66,18 @@
               type="password"
               name="password"
               id="passwordField"
-              class="form-control form-control-sm"
+              class="form-control"
               placeholder="Password"
               required
             />
             <small class="float-end p-2 showPassword">SHOW</small>
           </div>
-          <input type="submit" value="Register" class="btn btn-success w-100 submitBtn" />
+          <button type="submit" class="btn btn-success w-100 submitBtn">Register</button>
         </form>
       </div>
     </div>
   </div>
-  <div class="col-md-4"></div>
+  {% comment %} <div class="col-md-4"></div> {% endcomment %}
 </div>
 
 <script src="{% static 'js/register.js' %}"></script>

@@ -5,8 +5,7 @@ import json
 from datetime import datetime
 import pandas as pd
 import zipfile
-# from django.core.files import File
-from django.conf import settings
+# from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -15,9 +14,18 @@ from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 
 
-# Create your views here.
+############################
+# DASHBOARD VIEW
+#############################
+
 @login_required(login_url='/auth/login')
 def dashboard(request):
+    """
+    This view is responsible for all data in the dashboard page
+    It gets the total number of students and other aggregated data 
+    used in rendering the visualizations using Chart JS
+    """
+
     # Get total number of students
     total_students = Student.objects.count()
     # Get total degree students
@@ -62,9 +70,17 @@ def dashboard(request):
 
     return render(request, 'students/dashboard.html', context)
 
+###########################
+# BASIC CRUD FUNCTIONALITY
+###########################
 
-# @login_required(login_url='/auth/login')
 def student_list(request):
+    """
+    This GETs all the students in the database but restricted to a fixed number to ensure optimized performance
+    It also gets all the programs and admission_years populated in the database to populate the filtering dropdowns
+    If the program or admission year is not in the database it will not be available in the filtering dropdowns
+    """
+
     students = Student.objects.all()[:300]
     document_types = DocumentType.objects.all()
 
@@ -79,6 +95,11 @@ def student_list(request):
 
 
 def filter(request):
+    """
+    This is the function invoked if the filter button is clicked
+    It filters the database based on what is selected in the dropdowns and populates it in a table
+    """
+
     # Retrieve the form values from the request (POST or GET)
     program = request.POST.get('program', '')
     admission_year = request.POST.get('admission_year', '')
@@ -104,6 +125,12 @@ def filter(request):
 
 
 def save_documents(request, student):
+
+    """
+    This is the helper fucntion responsible for saving a document when a student is manually added
+    It is used within the add_student function 
+    """
+
     document_types = request.POST.getlist('document_types')
     documents = request.FILES.getlist('documents')
 
@@ -131,15 +158,13 @@ def save_documents(request, student):
                 )
 
 
-def delete_document(request,id):
-    document = Document.objects.get(id=id)
-    student = document.student.id
-    document.delete()
-    messages.error(request, 'Document deleted successfully')
-    return redirect('view', id=student)
-
-
 def add_student(request):
+
+    """
+    This is the function responsible for adding a student to the database manually or using the form
+    It uses the helper fuction save_documents() to save documents added in the form 
+    """
+
     if request.method == 'POST':
         # Extract and save student information
         student_index = request.POST.get('student_index')
@@ -183,7 +208,26 @@ def add_student(request):
     return render(request, 'student_info/add_student.html')
 
 
+def delete_document(request,id):
+
+    """
+    This deletes a specific document from the database
+    This is helpfull if you identify a minor issue with the uploaded document, you don't need to add the whole document again
+    """
+
+    document = Document.objects.get(id=id)
+    student = document.student.id
+    document.delete()
+    messages.error(request, 'Document deleted successfully')
+    return redirect('view', id=student)
+
+
 def edit(request, id):
+
+    """
+    Responsible for the edit page where a specific student's details are available for editing
+    """
+
     student = Student.objects.get(id=id)
     documents = Document.objects.filter(student=student)
     document_types = DocumentType.objects.all()

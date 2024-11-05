@@ -47,15 +47,3 @@ class DocumentType (models.Model):
     def __str__(self):
         return f"{self.document_type}"
     
-class Program (models.Model):
-    program = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f"{self.program}"
-    
-
-class AdmissionYear (models.Model):
-    admission_year = models.CharField(max_length=9)
-
-    def __str__(self):
-        return f"{self.admission_year}"
