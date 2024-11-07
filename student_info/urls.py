@@ -1,9 +1,9 @@
 from django.urls import path
-from .admin import admin_site  # Import your custom admin site instance
+# from .admin import admin_site  # Import your custom admin site instance
 from .import views
 
 urlpatterns = [
-    path('myadmin/', admin_site.urls),
+    # path('myadmin/', admin_site.urls),
     path('', views.dashboard, name='dashboard'),
     path('student_list', views.student_list, name='student_list'),
     path('view/<int:id>', views.view, name='view'),

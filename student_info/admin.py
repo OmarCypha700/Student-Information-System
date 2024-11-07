@@ -26,9 +26,25 @@ class StudentAdmin(admin.ModelAdmin):
     # Customize the column header for 'name'
     name.short_description = 'Full Name'
 
+@admin.register(Document, site=admin_site)
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = ('student', 'student_program', 'document_type') 
+    list_filter = ('document_type',)
+    search_fields = ('document_type', 'student_index')
+
+    def student_index(self, obj):
+        return obj.student.student_index  # Accesses the student_index field from the Student model
+    student_index.admin_order_field = 'student__student_index'  # Enables sorting in the admin list view
+    student_index.short_description = 'Student Index'  # Sets the display name in the admin
+
+    def student_program(self, obj):
+        return obj.student.program  # Accesses the program field from the Student model
+    student_program.admin_order_field = 'student__program'
+    student_program.short_description = 'Program'
+
 
 # Register other models with the custom admin site
-admin_site.register(Document)
+
 admin_site.register(DocumentType)
 
 # Register Django's User and Group models with the custom admin site

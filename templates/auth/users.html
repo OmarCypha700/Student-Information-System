@@ -1,0 +1,72 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<div class="container mt-4">
+    {% comment %} <div class="row">
+      <div class="col-md-9">
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="text-light" href="#">Loans</a></li>
+            <li class="breadcrumb-item text-light active" aria-current="page">Users</li>
+          </ol>
+        </nav>
+        <!-- Breadcrumbs end -->
+      </div>
+    </div> {% endcomment %}
+
+    <div class="container mt-4 mb-5 bg-light p-4 rounded table-responsive">
+
+        {% if users %}
+        <table id="example" class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              {% comment %} <th>Name</th> {% endcomment %}
+              <th>Username</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td>{{forloop.counter}}</td>
+              {% comment %} <td>{{user.first_name}} {{user.last_name}}</td> {% endcomment %}
+              <td>{{user.username}}</td>
+              <td>{{user.email}}</td>
+              {% if user.is_active%}
+              <td class='text-success'>Active</td>
+              {% else %}
+              <td class='text-danger'>Inactive</td>
+              {% endif %}
+              {% comment %} <td>{{user.is_active}}</td> {% endcomment %}
+              {% if user.is_active%}
+              <td><a href="{% url 'deactivate' user.id %}" class='badge rounded-pill bg-danger'>Deactivate</a></td>
+            {% else %}
+            <td><a href="{% url 'activate' user.id %}" class='badge rounded-pill bg-success'>Activate</a></td>
+            {% endif %}
+            </tr>
+            {% endfor %}
+          </tbody>
+          {% comment %} <tfoot>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Amount</th>
+              <th>Interest</th>
+              <th>Installment</th>
+              <th>Monthly Payment</th>
+              <th>Total Payment</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </tfoot> {% endcomment %}
+        </table>
+        {% endif %}
+      </div>
+    </div>
+
+
+
+{% endblock %}

@@ -39,7 +39,7 @@ def dashboard(request):
 
     # Calculate the admission years for the last five years
     current_year = datetime.now().year
-    past_five_years = [f"{year}/{year+1}" for year in range(current_year - 4, current_year + 1)]
+    past_five_years = [f"{year}/{year+1}" for year in range(current_year - 5, current_year + 1)]
     # Get unique programs
     programs = Student.objects.values_list('program', flat=True).distinct()
     

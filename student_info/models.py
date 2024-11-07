@@ -39,6 +39,9 @@ class Document(models.Model):
 
     def __str__(self):
         return f"{self.document_type} for {self.student}"
+    
+    class Meta:
+        unique_together = ('student', 'document_type')
 
 
 class DocumentType (models.Model):

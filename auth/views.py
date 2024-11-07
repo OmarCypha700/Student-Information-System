@@ -51,8 +51,8 @@ def register_user(request):
         username = request.POST['username']
         email = request.POST['email'] 
         password = request.POST['password']
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
+        # first_name = request.POST['first_name']
+        # last_name = request.POST['last_name']
 
         context = {
             'fiedlValue': request.POST,
@@ -66,12 +66,13 @@ def register_user(request):
                 user = User.objects.create_user(username=username, 
                                                 email=email, 
                                                 password=password, 
-                                                first_name=first_name, 
-                                                last_name=last_name,
+                                                # first_name=first_name, 
+                                                # last_name=last_name,
                                                 )
                 user.set_password(password)
                 # perm = Permission.objects.get(name=['Can add report'])
                 # user.user_permissions.add(perm)
+                user.is_active = False
                 user.save()
                 return render(request, 'auth/register.html')
         messages.error(request, 'User alredy exists')
@@ -151,3 +152,32 @@ def confirm_reset(request,uidb64, token):
         except Exception:
             pass  
         return render(request, 'auth/set-newpassword.html', context)
+    
+
+
+def users(request):
+    users = User.objects.exclude(username__in =['admin'])
+    context = {
+        'users': users
+    }
+    return render(request, 'auth/users.html', context)
+
+def activate_user(request, id):
+    user = User.objects.get(id=id)
+    user.is_active = True
+    user.save()
+    users = User.objects.exclude(username__in =['admin'])
+    context = {
+        'users': users
+    }
+    return render(request, 'auth/users.html', context)    
+
+def deactivate_user(request, id):
+    user = User.objects.get(id=id)
+    user.is_active = False
+    user.save()
+    users = User.objects.exclude(username__in =['admin'])
+    context = {
+        'users': users
+    }
+    return render(request, 'auth/users.html', context)

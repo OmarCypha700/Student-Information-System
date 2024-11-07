@@ -12,7 +12,7 @@
           {% csrf_token %}
           {% include 'partials/_messages.html' %}
 
-          <div class="form-group p-2">
+          {% comment %} <div class="form-group p-2">
             <label for="firstNameField"> First Name: </label>
             <input
               type="text"
@@ -35,7 +35,7 @@
               value="{{fiedlValue.last_name}}"
               required
             />
-          </div>
+          </div> {% endcomment %}
           <div class="form-group p-2">
             <label for="usernameField"> Username: </label>
             <input
