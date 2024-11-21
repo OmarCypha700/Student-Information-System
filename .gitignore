@@ -1,5 +1,6 @@
 db.sqlite3
 error.log
 /.venv
+media
 migrations
 __pycache__

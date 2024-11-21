@@ -74,11 +74,11 @@ def register_user(request):
                 # user.user_permissions.add(perm)
                 user.is_active = False
                 user.save()
+                messages.success(request, 'User registered successfully')
                 return render(request, 'auth/register.html')
         messages.error(request, 'User alredy exists')
         return render(request, 'auth/register.html')
-    else:
-        messages.success(request, 'User registered successfully')
+    else:   
         return render(request, 'auth/register.html')
 
 def reset_password(request):
