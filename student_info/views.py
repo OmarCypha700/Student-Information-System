@@ -73,7 +73,7 @@ def dashboard(request):
 ###########################
 # BASIC CRUD FUNCTIONALITY
 ###########################
-
+@login_required(login_url='/auth/login')
 def student_list(request):
     """
     This GETs all the students in the database but restricted to a fixed number to ensure optimized performance

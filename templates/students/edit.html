@@ -4,8 +4,17 @@
 
 {% include 'partials/_messages.html' %}
 
-<form method="post" enctype="multipart/form-data" action="{% url 'update' student.id %}" class="row g-3 container-md py-4 my-5 w-75 m-auto text-dark" style="background-color:#e5f4ea;">
+<form method="post" enctype="multipart/form-data" action="{% url 'update' student.id %}" class="row g-3 container-md py-4 my-5 m-auto text-dark" style="background-color:#e5f4ea;">
   {% csrf_token %}
+
+  {% comment %} <div class="d-flex justify-content-center align-items-center">
+    {% if student.profile_picture %}
+        <img src="{{ student.profile_picture.url }}" alt="Profile Picture" class="rounded-2" width="150" height="150">
+    {% else %}
+        <p>No profile picture available.</p>
+    {% endif %}
+    </div> {% endcomment %}
+
   <div class="col-md-4">
     <label for="first_name" class="form-label">First Name</label>
     <input type="text" class="form-control" id="first_name" name="first_name" value="{{student.first_name}}"

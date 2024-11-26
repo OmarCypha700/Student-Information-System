@@ -35,7 +35,7 @@ def login_user(request):
             if user is not None:
                 login(request, user)
                 # messages.success(request, 'You have succesfully logged in' )
-                return redirect('student_list')
+                return redirect('dashboard')
             messages.error(request, 'Invalid credentials,try again')
             return render(request, 'auth/login.html')
         return render(request, 'auth/login.html')

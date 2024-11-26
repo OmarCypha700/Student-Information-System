@@ -1,30 +1,53 @@
 {% load static %}
 {% load icon %}
-<nav id="sidebarMenu" class="d-none col-md-3 col-lg-2 d-md-block sidebar no-print" style="background-color: #183824;">
+<nav id="sidebarMenu" class="d-none col-md-2 col-lg-2 d-md-block sidebar no-print" style="background-color: #183824;">
     <div class="position-fixed pt-3">
       <ul class="nav flex-column">
         <li class="nav-item">
-          <a class="nav-link text-light" href="{% url 'dashboard' %}">
+        {% comment %} For Mobile view {% endcomment %}
+        <a class="nav-link text-light d-md-block d-lg-none" href="{% url 'dashboard' %}">
+            {% icon 'bar-chart-2' %}
+          </a>
+
+        {% comment %} For Desktop view {% endcomment %}
+          <a class="nav-link text-light d-md-none d-lg-block" href="{% url 'dashboard' %}">
             {% icon 'bar-chart-2' %}
             Dashboard
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-light" href="{% url 'student_list' %}">
+        {% comment %} For Mobile view {% endcomment %}
+          <a class="nav-link text-light d-md-block d-lg-none" href="{% url 'student_list' %}">
+            {% icon 'file-text' %}
+          </a>
+
+        {% comment %} For Desktop view {% endcomment %}
+          <a class="nav-link text-light d-md-none d-lg-block" href="{% url 'student_list' %}">
             {% icon 'file-text' %}
             Student List
           </a>
         </li>
         {% comment %} {% if perms.student_info_sys.can_view_report %} {% endcomment %}
         <li class="nav-item">
-          <a class="nav-link text-light" href="{% url 'register' %}">
+        {% comment %} For Mobile View {% endcomment %}
+          <a class="nav-link text-light d-md-block d-lg-none" href="{% url 'register' %}">
+            {% icon 'user' %}
+          </a>
+
+        {% comment %} For Desktop View {% endcomment %}
+          <a class="nav-link text-light d-md-none d-lg-block" href="{% url 'register' %}">
             {% icon 'user' %}
             Register User
           </a>
         </li>
         {% comment %} {% endif %} {% endcomment %}
         <li class="nav-item">
-          <a class="nav-link text-light" href="{% url 'users' %}">
+        {% comment %} For Mobile View {% endcomment %}
+          <a class="nav-link text-light d-md-block d-lg-none" href="{% url 'users' %}">
+            {% icon 'users' %}
+          </a>
+        {% comment %} For Desktop View {% endcomment %}
+          <a class="nav-link text-light d-md-none d-lg-block" href="{% url 'users' %}">
             {% icon 'users' %}
             Users
           </a>
