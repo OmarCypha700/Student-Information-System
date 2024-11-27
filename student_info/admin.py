@@ -3,6 +3,9 @@ from django.contrib.admin import AdminSite
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from .models import Student, Document, DocumentType
+from import_export.admin import ImportExportModelAdmin
+from import_export import resources
+from import_export.formats.base_formats import CSV, JSON
 
 # Custom Admin Site
 class MyAdminSite(AdminSite):
@@ -12,17 +15,26 @@ class MyAdminSite(AdminSite):
 
 admin_site = MyAdminSite(name='admin')
 
+# Define a Resource class for the db model (For importing and exporting)
+class StudentResource(resources.ModelResource):
+    class Meta:
+        model = Student
+        fields = ('student_index', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'email', 'phone_number', 'address','program', 'admission_year','father_name', 'father_contact', 'mother_name', 'mother_contact') 
+        export_order = ('student_index', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'email', 'phone_number', 'address', 'program', 'admission_year','father_name', 'father_contact', 'mother_name', 'mother_contact')
+
 # Register models with the custom admin site
 @admin.register(Student, site=admin_site)
-class StudentAdmin(admin.ModelAdmin):
+class StudentAdmin(ImportExportModelAdmin):
     list_display = ('student_index', 'name', 'admission_year', 'program', 'phone_number')  # Use 'name' instead of separate name fields
     list_filter = ('program', 'admission_year')
     search_fields = ('student_index', 'first_name', 'middle_name', 'last_name')
+    resource_class = StudentResource 
+    formats = [CSV, JSON]
 
+    # Customize the column header for 'name'
     def name(self, obj):
-        # Combine first_name, middle_name, and last_name into one field
-        return f"{obj.first_name} {obj.middle_name} {obj.last_name}".strip()
-
+        full_name = f"{obj.first_name} {obj.middle_name} {obj.last_name}".strip()
+        return full_name if full_name else f"{obj.first_name} {obj.last_name}"
     # Customize the column header for 'name'
     name.short_description = 'Full Name'
 

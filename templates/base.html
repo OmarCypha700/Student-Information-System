@@ -92,15 +92,15 @@
 </head>
 
 <body>
-  <header class="navbar sticky-top flex p-0 shadow no-print" style="background-color: #183824;">
+  <header class="navbar sticky-top flex-md-nowrap p-0 shadow no-print" style="background-color: #183824;">
       <div class="d-flex flex-row gap-2 px-5 pt-2 justify-content-start">
         <img src="{% static 'img/logo.webp' %}" alt="logo" style="width:50px; height:50px">
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="{% url 'student_list' %}">Student Information System</a>
       </div>
 
-      <div class="d-none d-md-block d-flex flex-row gap-2 px-5 pt-2 justify-content-end">
-        <p class="text-light">{{user.email}}</p>
-        <a class="nav-link text-light" href="{% url 'logout' %}">
+      <div class="d-none d-md-inline d-flex flex-row gap-5 px-5 pt-2 justify-content-end">
+        <p class="text-light d-md-inline">{{user.email}}</p>
+        <a class="nav-link text-light d-md-inline" href="{% url 'logout' %}">
           {% icon 'log-out' %}
         </a>
       </div>
