@@ -19,6 +19,8 @@ urlpatterns = [
     path('import_documents/', views.import_documents, name='import_documents'),
     path('document_template/', views.download_document_template, name='document_template'),
     path('import_profile/', views.import_profile, name='import_profile'),
+    path('update_profile/<int:id>', views.update_profile, name='update_profile'),
+    path('delete_profile/<int:id>', views.delete_profile, name='delete_profile'),
     path('profile_template/', views.download_profile_template, name='profile_template'),
 
 ]

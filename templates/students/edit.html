@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
 {% load icon %}
 
 {% include 'partials/_messages.html' %}
@@ -7,13 +8,20 @@
 <form method="post" enctype="multipart/form-data" action="{% url 'update' student.id %}" class="row g-3 container-md py-4 my-5 m-auto text-dark" style="background-color:#e5f4ea;">
   {% csrf_token %}
 
-  {% comment %} <div class="d-flex justify-content-center align-items-center">
+  <div class="d-flex justify-content-center align-items-center">
     {% if student.profile_picture %}
         <img src="{{ student.profile_picture.url }}" alt="Profile Picture" class="rounded-2" width="150" height="150">
+        <div class="position-absolute bottom-50 end-60 d-flex flex-row">
+          <div data-bs-toggle="modal" data-bs-target="#updateStudentModal" class="rounded-circle p-2 bg-success">{% icon 'edit-2' %}</div>
+          <a href="{% url 'delete_profile' student.id %}" class="nav-link rounded-circle p-2 bg-danger">{% icon 'trash-2' %}</a>
+        </div>
     {% else %}
-        <p>No profile picture available.</p>
+        <img src="{% static 'img/user.png' %}" alt="Student Id" width="150" height="150">
+        <div class="position-absolute bottom-50 end-60 d-flex flex-row">
+          <div data-bs-toggle="modal" data-bs-target="#updateStudentModal" class="rounded-circle p-2 bg-success">{% icon 'edit-2' %}</div>
+        </div>    
     {% endif %}
-    </div> {% endcomment %}
+  </div>
 
   <div class="col-md-4">
     <label for="first_name" class="form-label">First Name</label>
@@ -125,6 +133,50 @@
   </div>     
 
 </form>
+
+
+<!-- Update Student Picture Modal -->
+<div
+  class="modal fade"
+  id="updateStudentModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="updateStudentModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateStudentModalLabel">Upload Student Image</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form class="" method="post" action="{% url 'update_profile' student.id %}" enctype="multipart/form-data">
+          {% csrf_token %}          
+            <label class="form-label">Upload Document:</label>
+            <input class="form-control" type="file" name="profile" accept=".webp, .jpg" required><br>
+       
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

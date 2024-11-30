@@ -3,6 +3,7 @@ import io
 import os
 import json
 from datetime import datetime
+from django.urls import reverse
 import pandas as pd
 import zipfile
 # from django.conf import settings
@@ -208,6 +209,10 @@ def add_student(request):
     return render(request, 'student_info/add_student.html')
 
 
+# def update_profile(request, id):
+
+
+
 def delete_document(request,id):
 
     """
@@ -244,12 +249,22 @@ def edit(request, id):
 
 
 def delete(request, id):
+
+    """
+    Responsible for deleting an individual student record
+    """
+
     Student.objects.get(id=id).delete()
     messages.error(request, 'Record deleted successfully')
     return redirect('student_list')
 
 
 def view(request, id):
+
+    """
+    Responsible for the view page where a specific student's details are available for viewing only
+    """
+
     student = Student.objects.get(id=id)
     documents = Document.objects.filter(student=student)
     context = {
@@ -560,6 +575,53 @@ def download_document_template(request):
     writer.writerow(['NMCASMRM200002', 'Certificate', 'NMCASMRM200002_Certificate.pdf'])
 
     return response
+
+
+def update_profile(request, id):
+    student = Student.objects.get(id=id)
+
+    if request.method == 'POST':
+        profile = request.FILES.get('profile')
+
+        if not profile:
+            return render(request, 'students/edit.html', {
+                'student': student,
+                # 'error': 'No profile picture uploaded.',
+            })
+
+        if student.profile_picture:
+            old_file_path = student.profile_picture.path
+            if os.path.exists(old_file_path):
+                os.remove(old_file_path)  # Remove the old profile picture
+
+        student.profile_picture = profile
+        student.save()
+
+        return redirect (reverse('edit', args=[student.id]))
+    return render(request, 'students/edit.html', {'student': student})
+
+
+def delete_profile(request, id):
+    
+    """
+    Deletes only the profile picture of a student.
+
+    Returns:
+        Redirects to the student's edit page after deletion.
+    """
+    student = Student.objects.get(id=id)
+    if student.profile_picture:
+        # Remove the profile picture file from the file system
+        old_file_path = student.profile_picture.path
+        if os.path.exists(old_file_path):
+            os.remove(old_file_path)
+
+        # Clear the profile picture field in the database
+        student.profile_picture = None
+        student.save()
+
+    # Redirect to the student's edit page
+    return redirect(reverse('edit', args=[student.id]))
 
 
 
