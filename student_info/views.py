@@ -274,6 +274,14 @@ def view(request, id):
     return render(request,'students/view.html', context)
 
 def update(request, id):
+
+    """
+    This function update the database with the chages made in the edit view
+
+    Returns:
+    It redirects to the edit page
+    """
+
     if request.method == 'POST':
         student_index = request.POST.get('student_index')
         first_name = request.POST.get('first_name')
@@ -323,6 +331,14 @@ def update(request, id):
 
 
 def download_csv_template(request):
+
+    """
+    Provides a csv template for uploading student's BIODATA into the database
+
+    Returns:
+    Downloads a csv file with fields to guide users on how to populate the csv file
+    """
+
     # Define CSV headers based on expected fields
     headers = [
         'student_index', 'first_name', 'middle_name', 'last_name',
@@ -351,6 +367,11 @@ def download_csv_template(request):
 
 
 def import_students(request):
+
+    """
+    Reads an uploaded csv file containing all the student details and populates the database with it
+    
+    """
     if request.method == 'POST':
         csv_file = request.FILES.get('file')
         if not csv_file.name.endswith('.csv'):
@@ -418,6 +439,15 @@ def import_students(request):
 
 
 def export_students(request):
+
+    """
+    Downloads students record into a csv file depending on the filtering options selected
+
+    The funtion also downloads all documents for each student in the database and stores them in a folder
+
+    The folder is named with the student's Index number and the documents are also named with the student's index and document type
+    """
+
     if request.method == 'POST':
         # Retrieve export options
         export_csv = 'export_csv' in request.POST
@@ -494,6 +524,16 @@ def export_students(request):
 
 
 def import_documents(request):
+
+    """
+    Reads an uploaded csv file and and imports its data into the database
+
+    It takes in a csv containing the document metadata and the documents (multiple selection from the windows dialog) 
+    This function compares the name in the csv file with the name of the file uploaded 
+    and locates the Student_Index in the csv file with the one in the database and uploads the document for that file
+
+    """
+
     if request.method == 'POST':
         # Retrieve the uploaded CSV and document files
         csv_file = request.FILES.get('csv_file')
@@ -557,6 +597,14 @@ def import_documents(request):
 
 
 def download_document_template(request):
+
+    """
+    Provides a csv template for uploading student's documents into the database
+
+    Returns:
+    Downloads a csv file with sample data to guide users on how to populate the csv file
+    """
+
     # Define the filename
     filename = "document_upload_template.csv"
     
@@ -578,6 +626,14 @@ def download_document_template(request):
 
 
 def update_profile(request, id):
+
+    """
+    Updates only the profile picture of a student.
+
+    Returns:
+        Redirects to the student's edit page after deletion.
+    """
+
     student = Student.objects.get(id=id)
 
     if request.method == 'POST':
